@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JARVIS — Assistant personnel</title>
+<style>
+:root{color-scheme:dark;--blue:#36c9ff;--bg:#06111f;--panel:#0c2034}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:radial-gradient(circle at top,#123a5a,#06111f 55%);color:#eaf8ff;min-height:100vh;padding:22px}
+main{max-width:720px;margin:auto}.top{text-align:center;padding:26px 10px}.orb{width:110px;height:110px;border:2px solid var(--blue);border-radius:50%;margin:10px auto;display:grid;place-items:center;box-shadow:0 0 28px #19bfff66,inset 0 0 25px #19bfff33;font-size:36px;color:var(--blue)}
+h1{letter-spacing:8px;color:var(--blue);margin:12px 0 4px}.sub{color:#91b7ca;font-size:13px;letter-spacing:2px}
+.panel{background:#0c2034dd;border:1px solid #236080;border-radius:18px;padding:18px;margin:16px 0;box-shadow:0 10px 30px #0005}
+button,.filebtn{border:1px solid #2d9dc7;background:#0c3550;color:#eaf8ff;padding:13px 16px;border-radius:12px;font-size:15px;margin:5px;cursor:pointer}
+button.primary{background:#087da8;border-color:#48d5ff}.actions{display:flex;flex-wrap:wrap;justify-content:center}
+input,textarea{width:100%;padding:13px;border-radius:10px;border:1px solid #32627a;background:#061725;color:white;font-size:16px}
+textarea{min-height:80px;resize:vertical}.reply{min-height:55px;color:#bceeff;line-height:1.5}.small{font-size:12px;color:#8fb4c7}
+#preview{max-width:100%;max-height:220px;display:none;margin:12px auto;border-radius:12px}
+</style>
+</head>
+<body><main>
+<header class="top"><div class="orb">J</div><h1>J.A.R.V.I.S.</h1><div class="sub">ASSISTANT PERSONNEL • VERSION TEST</div></header>
+<section class="panel">
+<h2>Bonjour. Je suis JARVIS.</h2>
+<p class="small">Prototype de test : la voix fonctionne selon les possibilités de ton navigateur. L'intelligence artificielle et ÉcoleDirecte ne sont pas encore connectés.</p>
+<div class="actions"><button class="primary" onclick="speak('Bonjour. Je suis JARVIS. Que puis-je faire pour toi ?')">🔊 Tester la voix</button><button onclick="listen()">🎙️ Parler à JARVIS</button></div>
+<p id="status" class="small" role="status">En attente de ta commande.</p>
+</section>
+<section class="panel"><h2>Écris à JARVIS</h2>
+<textarea id="question" placeholder="Exemple : Aide-moi à faire mes devoirs..."></textarea>
+<div class="actions"><button class="primary" onclick="answer()">Envoyer</button><button onclick="document.getElementById('question').value=''">Effacer</button></div>
+<p id="reply" class="reply">Je suis prêt à t'aider.</p>
+</section>
+<section class="panel"><h2>Mes matières</h2><div class="actions">
+<button onclick="subject('Français')">Français</button><button onclick="subject('Mathématiques')">Mathématiques</button><button onclick="subject('Histoire-géographie')">Histoire-géo</button><button onclick="subject('Anglais')">Anglais</button><button onclick="subject('Sciences')">Sciences</button>
+</div></section>
+<section class="panel"><h2>Travailler à partir d'une photo</h2><input type="file" accept="image/*" id="photo" onchange="showPhoto(event)"><img id="preview" alt="Aperçu de ta photo"><p class="small">La photo est affichée ici dans ton navigateur. Son analyse automatique n'est pas encore activée.</p></section>
+<section class="panel"><h2>ÉcoleDirecte</h2><p class="small">La connexion à ÉcoleDirecte n'est pas encore activée. N'entre pas ton mot de passe dans cette version de test.</p><button onclick="speak('La connexion à ÉcoleDirecte sera ajoutée plus tard.')">En savoir plus</button></section>
+</main>
+<script>
+function speak(t){if(!('speechSynthesis'in window)){document.getElementById('status').textContent="La synthèse vocale n'est pas disponible dans ce navigateur.";return;}speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(t);u.lang='fr-FR';let voices=speechSynthesis.getVoices();let v=voices.find(x=>x.lang.startsWith('fr')&&/male|homme/i.test(x.name));if(v)u.voice=v;speechSynthesis.speak(u);document.getElementById('status').textContent="JARVIS parle."}
+function listen(){let R=window.SpeechRecognition||window.webkitSpeechRecognition;if(!R){document.getElementById('status').textContent="La reconnaissance vocale n'est pas prise en charge ici. Essaie Safari ou utilise le clavier.";return;}let r=new R();r.lang='fr-FR';r.onstart=()=>document.getElementById('status').textContent="Je t'écoute…";r.onresult=e=>{document.getElementById('question').value=e.results[0][0].transcript;answer()};r.onerror=()=>document.getElementById('status').textContent="Micro indisponible ou autorisation refusée.";r.start()}
+function answer(){let q=document.getElementById('question').value.trim();if(!q)return;let msg="Je suis encore en version prototype. Je pourrai répondre à cette demande quand le service d'intelligence artificielle sera connecté.";document.getElementById('reply').textContent=msg;speak(msg)}
+function subject(s){document.getElementById('question').value="Aide-moi en "+s+".";document.getElementById('reply').textContent="Tu as choisi : "+s+". Écris ta question ci-dessus."}
+function showPhoto(e){let f=e.target.files[0];if(!f)return;let im=document.getElementById('preview');im.src=URL.createObjectURL(f);im.style.display='block'}
+</script></body></html>
